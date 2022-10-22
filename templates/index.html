@@ -4,12 +4,27 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="\css\reset.css" />
     <link rel="stylesheet" href="\css\styles.css" />
     <title>Puissance</title>
   </head>
   <body>
-    bonjour
-    <div class="box" id="box">w</div>
+    <header class="header">
+      <form id="form" class="form">
+        <input placeholder="Votre nom" id="input" autocomplete="off" class="input"/><button class="button-create">Créer un salon privé</button>
+      </form>
+      <div class="" id="rooms-card">
+        <h2 class="h2">Salons disponibles</h2>
+        <ul class="roomlist" id="rooms-list"></ul>
+      </div>
+      <button id="check">Check</button>
+    </header>
+    <div class="box" id="box"></div>
+    <section class="game-section">
+      <div class="game">
+  
+      </div>
+    </section>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="\js\index.js"></script>

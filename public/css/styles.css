@@ -1,5 +1,82 @@
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.form{
+    display: flex;
+    flex-direction: row;
+    margin: 2rem 0 2rem 0;
+}
+
+.input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+input[type=text]:focus {
+    border: 3px solid #555;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: bolder;
+    margin: 1rem;
+}
+
+button {
+    background-color: #04AA6D;
+    border: none;
+    color: white;
+    padding: 12px 26px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.button-create {
+    background-color: #32a4e7;
+}
+
+.roomlist {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
+.room {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    border: 2.5px solid #555;
+    border-radius: 4px;
+    margin: .7rem;
+}
+
+.p-room {
+    margin: 1rem;
+    font-weight: bolder;
+    font-style: oblique;
+}
+
 .box {
     height: 10rem;
     width: 10rem;
     border: 5px solid red;
+}
+
+.game-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
