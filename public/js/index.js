@@ -17,6 +17,9 @@ const check = document.getElementById('check');
 const roomsCard = document.getElementById('rooms-card');
 const roomsList = document.getElementById('rooms-list');
 
+const game = document.getElementById('game');
+const blue = document.getElementById('blue');
+
 socket.emit('get rooms');
 
 socket.on('list rooms', (rooms) => {
@@ -95,9 +98,39 @@ const joinRoom = function () {
 
 function table(rows = 6, columns = 7) {
     board = [];
+
     for(let i = 0; i < rows; i++){
         board[i] = Array(columns).fill(0);
-    }
-    console.log(board)
 
+        let column = document.createElement('div')
+        column.classList.add('blue');
+        column.setAttribute('id', 'blue');
+        game.appendChild(column)
+        for(let i = 0; i < columns; i++){
+            let green = document.createElement('div')
+            green.setAttribute('id', 'green');
+            green.classList.add('green');
+            column.appendChild(green)
+
+        }
+        
+    }
+
+
+    // let table = document.createElement('table');
+    // //ATTENTION, la page html est écrite de haut en bas. Les indices 
+    // //pour le jeu vont de bas en haut (compteur i de la boucle)
+    // for (let i = this.rows - 1; i >= 0; i--) {
+    //   let tr = table.appendChild(document.createElement('tr'));
+    //   for (let j = 0; j < this.cols; j++) {
+    //     let td = tr.appendChild(document.createElement('td'));
+    //     let colour = this.board[i][j];
+    //     if (colour)
+    //       td.className = 'player' + colour;
+    //     td.dataset.column = j;
+    //   }
+    // }
+
+
+    console.log(board)
 }
