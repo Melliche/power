@@ -66,10 +66,10 @@ io.on('connection', (socket) => {
         io.to(socket.id).emit('list rooms', rooms);
     });
 
-    socket.on('play', (roomId) => {
+    socket.on('play', (player) => {
+        console.log(player.roomId)
         console.log('message');
-        io.to(roomId).emit('play', player);
-        // io.emit('play')
+        io.to(player.roomId).emit('play', player);
       });
 
     socket.on('disconnect', () => {

@@ -13,10 +13,8 @@ const player = {
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 const boite = document.getElementById('box');
-const cell = document.getElementsByClassName('cell');
-
+const cells = document.querySelectorAll('.cell');
 const check = document.getElementById('check');
-
 const roomsCard = document.getElementById('rooms-card');
 const roomsList = document.getElementById('rooms-list');
 
@@ -39,7 +37,6 @@ socket.on('list rooms', (rooms) => {
         });
     }
     if (html !== "") {
-        console.log('roomzs')
         roomsCard.style.display = 'contents';
         roomsList.innerHTML = html;
 
@@ -64,34 +61,18 @@ form.addEventListener('submit', function(e) {
 });
 
 
-// for (const celle of cell) {
-//     // box.addEventListener('click', function onClick() {
-//     //   console.log('box clicked');
-//     // });
-//     cell.addEventListener("click", function(e) {
-
-//         const playedCell = this.getAttribute('id');
-//         console.log(playedCell)
-//         if (this.innerText === "" && player.turn) {
-//             player.playedCell = playedCell;
-//         }
+// pour chaque clique de cell
+cells.forEach( cell => {
+    cell.onclick = function () {
+        const playedCell = this.getAttribute('id');
+        console.log(playedCell)
+        if (this.innerText === "" && player.turn) {
+            player.playedCell = playedCell;
+        }
         
-//         console.log('clickonboite')    
-//         socket.emit('play', player.roomId);
-//     });
-//   }
-// console.log(cell)
-
-cell.addEventListener("click", function(e) {
-
-    const playedCell = this.getAttribute('id');
-    console.log(playedCell)
-    if (this.innerText === "" && player.turn) {
-        player.playedCell = playedCell;
+        console.log('clickonboite')    
+        socket.emit('play', player);
     }
-    
-    console.log('clickonboite')    
-    socket.emit('play', player.roomId);
 });
 
 check.addEventListener("click", function(e) {
@@ -104,10 +85,10 @@ check.addEventListener("click", function(e) {
 // });
 
 socket.on('play', (ennemyPlayer) => {
-console.log('playeee')
+    console.log('playeee')
     if (ennemyPlayer.socketId !== player.socketId && !ennemyPlayer.turn) {
         const playedCell = document.getElementById(`${ennemyPlayer.playedCell}`);
-
+        console.log('played')
         playedCell.classList.add('danger');
         // playedCell.innerHTML = 'O';
 
@@ -124,6 +105,7 @@ socket.on('start game', (players) => {
 });
 
 function startGame(players) {
+    document.getElementById('game').classList.remove('none') 
 
     const ennemyPlayer = players.find(p => p.socketId != player.socketId);
     ennemyUsername = ennemyPlayer.username;
@@ -144,33 +126,32 @@ const joinRoom = function () {
         player.username = input.value;
         player.socketId = socket.id;
         player.roomId = this.dataset.room;
-
         socket.emit('playerData', player);
 
         roomsCard.style.display = 'none';
         roomsList.style.display = 'none';
+
+        
     }
 }
 
-// function table(rows = 6, columns = 7) {
-//     board = [];
+function table(rows = 6, columns = 7) {
+    board = [];
 
-//     for(let i = 0; i < rows; i++){
-//         board[i] = Array(columns).fill(0);
+    for(let i = 0; i < rows; i++){
+        board[i] = Array(columns).fill(0);
 
-//         let column = document.createElement('div')
-//         column.classList.add('blue');
-//         column.setAttribute('id', `row-${i}`);
-//         game.appendChild(column)
-//         for(let i = 0; i < columns; i++){
-//             let green = document.createElement('div')
-//             green.setAttribute('id', `col-${i}`);
-//             green.classList.add('green', 'cell');
-//             column.appendChild(green)
+        // let column = document.createElement('div')
+        // column.classList.add('blue');
+        // column.setAttribute('id', `row-${i}`);
+        // game.appendChild(column)
+        // for(let i = 0; i < columns; i++){
+        //     let green = document.createElement('div')
+        //     green.setAttribute('id', `col-${i}`, 'cell');
+        //     green.classList.add('green', 'cell');
+        //     column.appendChild(green)
 
-//         }
-//     }
-//     console.log(cell)
-
-//     console.log(board)
-// }
+        // }
+    }
+    console.log(board)
+}
