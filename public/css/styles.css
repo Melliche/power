@@ -113,3 +113,11 @@ button {
     background-color: #1b2837;
     border-radius: 50%;
 }
+
+.cell {
+
+}
+
+.danger {
+    background-color: red;
+}

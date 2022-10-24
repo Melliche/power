@@ -4,13 +4,16 @@ const socket = io();
 const player = {
     host: false,
     roomId: null,
-    username: "",
-    socketId: "",
+    username: '',
+    socketId: '',
+    turn: false,
+    playedCell: '',
 };
 
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 const boite = document.getElementById('box');
+const cell = document.getElementsByClassName('cell');
 
 const check = document.getElementById('check');
 
@@ -52,7 +55,7 @@ form.addEventListener('submit', function(e) {
     player.username = input.value;
     player.socketId = socket.id;
     player.host = true;
-
+    player.turn = true;
     roomsCard.style.display = 'none';
     roomsList.style.display = 'none';
 
@@ -60,7 +63,33 @@ form.addEventListener('submit', function(e) {
 
 });
 
-boite.addEventListener("click", function(e) {
+
+// for (const celle of cell) {
+//     // box.addEventListener('click', function onClick() {
+//     //   console.log('box clicked');
+//     // });
+//     cell.addEventListener("click", function(e) {
+
+//         const playedCell = this.getAttribute('id');
+//         console.log(playedCell)
+//         if (this.innerText === "" && player.turn) {
+//             player.playedCell = playedCell;
+//         }
+        
+//         console.log('clickonboite')    
+//         socket.emit('play', player.roomId);
+//     });
+//   }
+// console.log(cell)
+
+cell.addEventListener("click", function(e) {
+
+    const playedCell = this.getAttribute('id');
+    console.log(playedCell)
+    if (this.innerText === "" && player.turn) {
+        player.playedCell = playedCell;
+    }
+    
     console.log('clickonboite')    
     socket.emit('play', player.roomId);
 });
@@ -70,14 +99,43 @@ check.addEventListener("click", function(e) {
     table();
 });
 
-socket.on('play', () => { 
-    boite.style.display = 'none';
+// socket.on('play', () => { 
+//     boite.style.display = 'none';
+// });
+
+socket.on('play', (ennemyPlayer) => {
+console.log('playeee')
+    if (ennemyPlayer.socketId !== player.socketId && !ennemyPlayer.turn) {
+        const playedCell = document.getElementById(`${ennemyPlayer.playedCell}`);
+
+        playedCell.classList.add('danger');
+        // playedCell.innerHTML = 'O';
+
+    }
 });
 
 socket.on('join room', (roomId) => {
     player.roomId = roomId;
 });
 
+socket.on('start game', (players) => {
+    console.log(players)
+    startGame(players);
+});
+
+function startGame(players) {
+
+    const ennemyPlayer = players.find(p => p.socketId != player.socketId);
+    ennemyUsername = ennemyPlayer.username;
+
+
+
+    // if (player.host && player.turn) {
+    //     setTurnMessage('alert-info', 'alert-success', "C'est ton tour de jouer");
+    // } else {
+    //     setTurnMessage('alert-success', 'alert-info', `C'est au tour de <b>${ennemyUsername}</b> de jouer`);
+    // }
+}
 
 // Quand un joueur rejoins une room et qu'il n'est pas l'host
 const joinRoom = function () {
@@ -89,48 +147,30 @@ const joinRoom = function () {
 
         socket.emit('playerData', player);
 
-        // userCard.hidden = true;
-        // waitingArea.style.display = 'contents';
         roomsCard.style.display = 'none';
         roomsList.style.display = 'none';
     }
 }
 
-function table(rows = 6, columns = 7) {
-    board = [];
+// function table(rows = 6, columns = 7) {
+//     board = [];
 
-    for(let i = 0; i < rows; i++){
-        board[i] = Array(columns).fill(0);
+//     for(let i = 0; i < rows; i++){
+//         board[i] = Array(columns).fill(0);
 
-        let column = document.createElement('div')
-        column.classList.add('blue');
-        column.setAttribute('id', 'blue');
-        game.appendChild(column)
-        for(let i = 0; i < columns; i++){
-            let green = document.createElement('div')
-            green.setAttribute('id', 'green');
-            green.classList.add('green');
-            column.appendChild(green)
+//         let column = document.createElement('div')
+//         column.classList.add('blue');
+//         column.setAttribute('id', `row-${i}`);
+//         game.appendChild(column)
+//         for(let i = 0; i < columns; i++){
+//             let green = document.createElement('div')
+//             green.setAttribute('id', `col-${i}`);
+//             green.classList.add('green', 'cell');
+//             column.appendChild(green)
 
-        }
-        
-    }
+//         }
+//     }
+//     console.log(cell)
 
-
-    // let table = document.createElement('table');
-    // //ATTENTION, la page html est écrite de haut en bas. Les indices 
-    // //pour le jeu vont de bas en haut (compteur i de la boucle)
-    // for (let i = this.rows - 1; i >= 0; i--) {
-    //   let tr = table.appendChild(document.createElement('tr'));
-    //   for (let j = 0; j < this.cols; j++) {
-    //     let td = tr.appendChild(document.createElement('td'));
-    //     let colour = this.board[i][j];
-    //     if (colour)
-    //       td.className = 'player' + colour;
-    //     td.dataset.column = j;
-    //   }
-    // }
-
-
-    console.log(board)
-}
+//     console.log(board)
+// }
