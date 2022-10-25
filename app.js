@@ -67,8 +67,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('play', (player) => {
-        console.log(player.roomId)
-        console.log('message');
         io.to(player.roomId).emit('play', player);
       });
 

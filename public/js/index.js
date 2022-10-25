@@ -69,64 +69,42 @@ cells.forEach((cell) => {
   cell.onclick = function () {
     let playedCell = this.getAttribute("id");
     if (player.turn) {
-    //   player.playedCell = playedCell;
-    //   board[columcell][cell] = 1;
       columcell = playedCell.substring(0, 1);
-    //   cell = playedCell.substring(2)
+        // cell = playedCell.substring(2)
       console.log(board)
       for(let i = 0; i < board[columcell].length; i++) {
-        console.log(i)
         if (board[columcell][i] == 0) {
-            board[columcell][i] == 1;
+            board[columcell][i] = 1;
             playedCell = `${columcell}-${i}`;
             player.playedCell = playedCell;
+            document.getElementById(`${playedCell}`).classList.add("team");
+            getWinner(columcell);
             break
         }
       }
-
-
-
-      // playedCell.-
-      // console.log(playedCell)
-      document.getElementById(`${playedCell}`).classList.add("team");
       player.turn = false;
+      socket.emit("play", player);
     }
-    console.log("clickonboite");
-    socket.emit("play", player);
   };
 });
 
 socket.on("play", (ennemyPlayer) => {
   if (ennemyPlayer.socketId !== player.socketId && !ennemyPlayer.turn) {
-    console.log("yuu");
-    console.log(ennemyPlayer);
-    // const playedCell = document.getElementById(`${ennemyPlayer.playedCell}`);
-    // console.log(playedCell);
-    // console.log(playedCell.parentNode.getAttribute("id"));
 
-
-
-    // console.log(playedCell.parentNode.getAttribute("id"));
-    // let playedCell = this.getAttribute("id");
-    //   player.playedCell = playedCell;
-    //   board[columcell][cell] = 1;
     columcell = ennemyPlayer.playedCell.substring(0, 1);
     //   cell = playedCell.substring(2)
-    console.log(board)
+    // console.log(board)
     for(let i = 0; i < board[columcell].length; i++) {
-    console.log(i)
-    if (board[columcell][i] == 0) {
-        board[columcell][i] == 1;
-        let playedCell = `${columcell}-${i}`;
-        player.playedCell = playedCell;
-        break
+        if (board[columcell][i] == 0) {
+            board[columcell][i] = 1;
+            let playedCell = `${columcell}-${i}`;
+            player.playedCell = playedCell;
+            console.log(board)
+            document.getElementById(`${playedCell}`).classList.add("danger");
+            getWinner(columcell);
+            break
+        }
     }
-    }
-
-
-
-
-    playedCell.classList.add("danger");
     player.turn = true;
   }
 });
@@ -139,6 +117,23 @@ socket.on("start game", (players) => {
   console.log(players);
   startGame(players);
 });
+
+function getWinner(columcell) {
+    console.log(columcell)
+    board[columcell]
+
+    equal = 0
+    //vertical
+    for (let i = 0; i < board[columcell].length; i++) {
+         (board[columcell][i] != 0 && board[columcell][i] == board[columcell][-1] ) ? equal++ : equal;
+         if (equal >= 4){
+            print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
+         }
+    }
+
+    // alert('YORG')
+}
+
 
 function startGame(players) {
   table();
