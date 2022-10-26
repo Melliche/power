@@ -69,17 +69,19 @@ cells.forEach((cell) => {
   cell.onclick = function () {
     let playedCell = this.getAttribute("id");
     if (player.turn) {
-      columcell = playedCell.substring(0, 1);
-        // cell = playedCell.substring(2)
-      console.log(board)
-      for(let i = 0; i < board[columcell].length; i++) {
+      console.log(playedCell)
+      let columcell = playedCell.substring(0, 1);
+
+      // cell = playedCell.substring(2)
+      // console.log(board)
+      for (let i = 0; i < board[columcell].length; i++) {
         if (board[columcell][i] == 0) {
-            board[columcell][i] = 1;
-            playedCell = `${columcell}-${i}`;
-            player.playedCell = playedCell;
-            document.getElementById(`${playedCell}`).classList.add("team");
-            getWinner(columcell);
-            break
+          board[columcell][i] = 1;
+          playedCell = `${columcell}-${i}`;
+          player.playedCell = playedCell;
+          document.getElementById(`${playedCell}`).classList.add("team");
+          getWinner(columcell, playedCell.substring(2));
+          break;
         }
       }
       player.turn = false;
@@ -90,20 +92,19 @@ cells.forEach((cell) => {
 
 socket.on("play", (ennemyPlayer) => {
   if (ennemyPlayer.socketId !== player.socketId && !ennemyPlayer.turn) {
-
     columcell = ennemyPlayer.playedCell.substring(0, 1);
-    //   cell = playedCell.substring(2)
+    // let cell = ennemyPlayer.playedCell.substring(2)
     // console.log(board)
-    for(let i = 0; i < board[columcell].length; i++) {
-        if (board[columcell][i] == 0) {
-            board[columcell][i] = 1;
-            let playedCell = `${columcell}-${i}`;
-            player.playedCell = playedCell;
-            console.log(board)
-            document.getElementById(`${playedCell}`).classList.add("danger");
-            getWinner(columcell);
-            break
-        }
+    for (let i = 0; i < board[columcell].length; i++) {
+      if (board[columcell][i] == 0) {
+        board[columcell][i] = 2;
+        let playedCell = `${columcell}-${i}`;
+        player.playedCell = playedCell;
+        // console.log(board)
+        document.getElementById(`${playedCell}`).classList.add("danger");
+        getWinner(columcell, playedCell.substring(2));
+        break;
+      }
     }
     player.turn = true;
   }
@@ -118,22 +119,35 @@ socket.on("start game", (players) => {
   startGame(players);
 });
 
-function getWinner(columcell) {
-    console.log(columcell)
-    board[columcell]
+function getWinner(columcell, cell) {
+  console.log(columcell);
+  board[columcell];
+  console.log(cell)
 
-    equal = 0
-    //vertical
-    for (let i = 0; i < board[columcell].length; i++) {
-         (board[columcell][i] != 0 && board[columcell][i] == board[columcell][-1] ) ? equal++ : equal;
-         if (equal >= 4){
-            print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
-         }
+  equal = 1;
+  //vertical
+  for (let i = 0; i < board[columcell].length; i++) {
+    // console.log(board[columcell][i], "board element case");
+    board[columcell][i] != 0 && board[columcell][i] == board[columcell][i + 1]
+      ? equal++
+      : equal = 1;
+    if (equal >= 4) {
+      console.log(board[columcell][i], ' GAGNANT VERTICAL');
     }
+  }
 
-    // alert('YORG')
+  //horizontal
+  for (let i = 0; i < board.length; i++) {
+    // console.log(board[columcell][i], "board element case");
+    board[i][cell] != 0 && board[i][cell] == board[i + 1][cell]
+      ? equal++
+      : equal = 1;
+    if (equal >= 4) {
+      console.log(board[i][cell], ' GAGNANT HORIZONTAL');
+
+    }
+  }
 }
-
 
 function startGame(players) {
   table();
