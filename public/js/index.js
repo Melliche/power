@@ -69,14 +69,14 @@ cells.forEach((cell) => {
   cell.onclick = function () {
     let playedCell = this.getAttribute("id");
     if (player.turn) {
-      console.log(playedCell)
+      console.log(playedCell);
       let columcell = playedCell.substring(0, 1);
 
       // cell = playedCell.substring(2)
       // console.log(board)
       for (let i = 0; i < board[columcell].length; i++) {
         if (board[columcell][i] == 0) {
-          board[columcell][i] = 1;
+          board[columcell][i] = player.username;
           playedCell = `${columcell}-${i}`;
           player.playedCell = playedCell;
           document.getElementById(`${playedCell}`).classList.add("team");
@@ -97,7 +97,7 @@ socket.on("play", (ennemyPlayer) => {
     // console.log(board)
     for (let i = 0; i < board[columcell].length; i++) {
       if (board[columcell][i] == 0) {
-        board[columcell][i] = 2;
+        board[columcell][i] = ennemyPlayer.username;
         let playedCell = `${columcell}-${i}`;
         player.playedCell = playedCell;
         // console.log(board)
@@ -122,31 +122,37 @@ socket.on("start game", (players) => {
 function getWinner(columcell, cell) {
   console.log(columcell);
   board[columcell];
-  console.log(cell)
+  console.log(cell);
 
-  equal = 1;
+  equal = 0;
   //vertical
   for (let i = 0; i < board[columcell].length; i++) {
-    // console.log(board[columcell][i], "board element case");
-    board[columcell][i] != 0 && board[columcell][i] == board[columcell][i + 1]
-      ? equal++
-      : equal = 1;
+    board[columcell][i] == player.username ? equal++ : (equal = 0);
     if (equal >= 4) {
-      console.log(board[columcell][i], ' GAGNANT VERTICAL');
+      console.log(board[columcell][i], " GAGNANT VERTICAL");
     }
   }
 
   //horizontal
   for (let i = 0; i < board.length; i++) {
-    // console.log(board[columcell][i], "board element case");
-    board[i][cell] != 0 && board[i][cell] == board[i + 1][cell]
-      ? equal++
-      : equal = 1;
+    board[i][cell] == player.username ? equal++ : (equal = 0);
     if (equal >= 4) {
-      console.log(board[i][cell], ' GAGNANT HORIZONTAL');
-
+      console.log(board[i][cell], " GAGNANT HORIZONTAL");
     }
   }
+
+  //diagonale
+  for(let i = 0; board[i][cell] > 0 && board[columcell][i] > 0; i--) {
+    console.log(board[i][cell])
+    console.log(board[columcell][i])
+  }
+  // for (let i = 0; i < board.length; i++) {
+
+  //   board[i][cell + 1] == player.username ? equal++ : (equal = 0);
+  //   if (equal >= 4) {
+  //     console.log(board[i][cell], " GAGNANT HORIZONTAL");
+  //   }
+  // }
 }
 
 function startGame(players) {
