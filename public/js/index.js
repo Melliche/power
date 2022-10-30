@@ -7,6 +7,7 @@ const player = {
   socketId: "",
   turn: false,
   playedCell: "",
+  win: false,
 };
 
 let board = [];
@@ -14,13 +15,16 @@ let board = [];
 const form = document.getElementById("form");
 const input = document.getElementById("input");
 const boite = document.getElementById("box");
-const cells = document.querySelectorAll(".cell");
+const columns = document.querySelectorAll(".column");
 const check = document.getElementById("check");
 const roomsCard = document.getElementById("rooms-card");
 const roomsList = document.getElementById("rooms-list");
-
+const header = document.getElementById('header');
 const game = document.getElementById("game");
-const blue = document.getElementById("blue");
+// const blue = document.getElementById("blue");
+const info = document.getElementById('info');
+const victory = document.getElementById('victory');
+
 
 socket.emit("get rooms");
 
@@ -66,28 +70,30 @@ check.addEventListener("click", function (e) {
 });
 
 // pour chaque clique de cell
-cells.forEach((cell) => {
-  cell.onclick = function () {
+columns.forEach((column) => {
+  column.onclick = function () {
     let playedCell = this.getAttribute("id");
     if (player.turn) {
-      // console.log(playedCell);
-      let columcell = playedCell.substring(0, 1);
-
-      // cell = playedCell.substring(2)
-      // console.log(board)
-      for (let i = 0; i < board[columcell].length; i++) {
-        if (board[columcell][i] == 0) {
-          board[columcell][i] = player.username;
-          playedCell = `${columcell}-${i}`;
+      let columnIndex = playedCell.substring(4);
+      for (let i = 0; i < board[columnIndex].length; i++) {
+        if (board[columnIndex][i] == 0) {
+          board[columnIndex][i] = player.username;
+          playedCell = `${columnIndex}-${i}`;
+          console.log(playedCell)
           player.playedCell = playedCell;
           document.getElementById(`${playedCell}`).classList.add("team");
-          console.log(playedCell.substring(2))
-          getWinner(columcell, playedCell.substring(2));
+          player.win = getWinner(columnIndex, playedCell.substring(2));
           break;
         }
       }
       player.turn = false;
       socket.emit("play", player);
+
+      if (player.win) {
+        game.classList.add('none');
+        victory.classList.remove('none');
+        document.getElementById('h2').innerHTML = 'VOUS AVEZ GAGN2';
+      }
     }
   };
 });
@@ -104,12 +110,19 @@ socket.on("play", (ennemyPlayer) => {
         player.playedCell = playedCell;
         // console.log(board)
         document.getElementById(`${playedCell}`).classList.add("danger");
-        getWinner(columcell, playedCell.substring(2));
+
+        // getWinner(columcell, playedCell.substring(2));
         break;
       }
     }
     player.turn = true;
+    if (ennemyPlayer.win) {
+      game.classList.add('none');
+      victory.classList.remove('none');
+      document.getElementById('h2').innerHTML = 'VOUS AVEZ PERDU';
+    }
   }
+  
 });
 
 socket.on("join room", (roomId) => {
@@ -121,78 +134,101 @@ socket.on("start game", (players) => {
   startGame(players);
 });
 
-
-
-
-
-
-
-
-
-
+socket.on('play again', (players) => {
+  console.log('socket on')
+  restartGame(players);
+})
 
 function getWinner(columcell, cell) {
-  console.log('columncell = ',columcell);
-  console.log('cell = ',cell);
-
-  equal = 0;
+  let equal = 0;
   //vertical
-  // for (let i = 0; i < board[columcell].length; i++) {
-  //   board[columcell][i] == player.username ? equal++ : (equal = 0);
-  //   if (equal >= 4) {
-  //     console.log(board[columcell][i], " GAGNANT VERTICAL");
-  //   }
-  // }
-
-  //horizontal
-  // for (let i = 0; i < board.length; i++) {
-  //   board[i][cell] == player.username ? equal++ : (equal = 0);
-  //   if (equal >= 4) {
-  //     console.log(board[i][cell], " GAGNANT HORIZONTAL");
-  //   }
-  // }
-
-  //diagonale
-  console.log(board)
-  console.log(board.length)
-  a = board.length
-  console.log(board[columcell].length)
-  b = board[columcell].length
-  for(let i = 0;( cell < b)&& (columcell < a); i++ ) {
-    // console.log('columncell + 1= ',columcell++)   //
-    // console.log('cell + 1 = ',cell++) //
-    // console.log('board[columcell + 1][cell + 1] = ',board[columcell++][cell++]) // 
-    board[columcell++][cell++] == player.username ? equal++ : (equal = 0);
+  for (let i = 0; i < board[columcell].length; i++) {
+    board[columcell][i] == player.username ? equal++ : (equal = 0);
     if (equal >= 4) {
-      console.log(board[columcell++][cell++], " GAGNANT DIAGONAL");
+      console.log(board[columcell][i], " GAGNANT VERTICAL");
+      game.classList.add('none');
+      victory.classList.remove('none');
+      document.getElementById('h2').innerHTML = 'YOUYOUYOYU';
+      equal = 0;
+      return true;
     }
   }
 
+  //horizontal
+  for (let i = 0; i < board.length; i++) {
+    board[i][cell] == player.username ? equal++ : (equal = 0);
+    if (equal >= 4) {
+      console.log(board[i][cell], " GAGNANT HORIZONTAL");
+      equal = 0;
+      return true;
+    }
+  }
 
+  //diagonale
 
+  equal = 0;
+  let columnIndex = parseInt(columcell) - parseInt(cell);
+  for (
+    let i = Math.max(columnIndex, 0);
+    i < Math.min(board[columcell].length, board.length + columnIndex);
+    i++
+  ) {
+    board[i][i - columnIndex] == player.username ? equal++ : (equal = 0);
+    if (equal >= 4) {
+      console.log("DIAGDIAGDIAGDIAG");
+      equal = 0;
+      return true;
+    }
+  }
 
-
-
-
-
-
-
-
+  // diagonale opposé
+  equal = 0;
+  columnIndex = parseInt(columcell) + parseInt(cell);
+  for (
+    let i = Math.max(columnIndex - board.length + 1, 0);
+    i < Math.min(board[columcell].length, columnIndex + 1);
+    i++
+  ) {
+    board[i][columnIndex - i] == player.username ? equal++ : (equal = 0);
+    if (equal >= 4) {
+      console.log("ANTIANTIANTIANTIANTIANTIANTI");
+      equal = 0;
+      return true;
+    }
+  }
 }
 
 function startGame(players) {
   table();
-  document.getElementById("game").classList.remove("none");
+  header.style.display = 'none';
+  info.classList.remove('none')
+  game.classList.remove("none");
 
   const ennemyPlayer = players.find((p) => p.socketId != player.socketId);
   ennemyUsername = ennemyPlayer.username;
-
-  // if (player.host && player.turn) {
-  //     setTurnMessage('alert-info', 'alert-success', "C'est ton tour de jouer");
-  // } else {
-  //     setTurnMessage('alert-success', 'alert-info', `C'est au tour de <b>${ennemyUsername}</b> de jouer`);
-  // }
 }
+
+function restartGame(players = null) {
+  console.log('restart')
+  if (player.host && !players) {
+    console.log('efez')
+      player.turn = true;
+      socket.emit('play again', player.roomId);
+  }
+
+  const cells = document.getElementsByClassName('cell');
+
+  if (!player.host) {
+      player.turn = false;
+  }
+
+  player.win = false;
+
+  if (players) {
+      startGame(players);
+  }
+}
+
 
 // Quand un joueur rejoins une room et qu'il n'est pas l'host
 const joinRoom = function () {
@@ -209,19 +245,41 @@ const joinRoom = function () {
 };
 
 function table(rows = 6, columns = 7) {
+  board = [];
   for (let i = 0; i < columns; i++) {
     board[i] = Array(rows).fill(0);
-
+    for (let j = 0; j < rows; j++) {
+      let cellToClear = `${i}-${j}`;
+      console.log(cellToClear)
+      document.getElementById(`${cellToClear}`).classList.remove('danger', 'team');
+    }
+    // console.log(document.querySelectorAll('.cell')) 
     // let column = document.createElement('div')
     // column.classList.add('blue');
     // column.setAttribute('id', `row-${i}`);
     // game.appendChild(column)
     // for(let i = 0; i < columns; i++){
-    //     let green = document.createElement('div')
-    //     green.setAttribute('id', `col-${i}`, 'cell');
-    //     green.classList.add('green', 'cell');
-    //     column.appendChild(green)
-
-    // }
-  }
+      //     let green = document.createElement('div')
+      //     green.setAttribute('id', `col-${i}`, 'cell');
+      //     green.classList.add('green', 'cell');
+      //     column.appendChild(green)
+      
+      // }
+    }
 }
+
+// console.log(board)
+// console.log(board.length)
+// console.log(Math.max((cell - columcell), 0))
+// a = board.length
+// // console.log(board[columcell].length)
+// b = board[columcell].length
+// for(let i = 0;( cell < b)&& (columcell < a); i++ ) {
+//   // console.log('columncell + 1= ',columcell++)   //
+//   // console.log('cell + 1 = ',cell++) //
+//   // console.log('board[columcell + 1][cell + 1] = ',board[columcell++][cell++]) //
+//   board[columcell++][cell++] == player.username ? equal++ : (equal = 0);
+//   if (equal >= 4) {
+//     console.log(board[columcell++][cell++], " GAGNANT DIAGONAL");
+//   }
+// }

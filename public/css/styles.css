@@ -83,6 +83,8 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
+    width: 100vw;
 
 }
 
@@ -99,7 +101,7 @@ button {
     display: none;
 }
 
-.blue {
+.column {
     height: auto;
     width: auto;
     /* background-color: blue; */
@@ -109,16 +111,18 @@ button {
     flex-direction: column;    
 }
 
-.green {
+.column:hover{
+    background-color: #385068;
+
+    /* transition: background-color 3s ease; */
+}
+
+.cell {
     height: 4rem;
     width: 4rem;
     margin: .7rem;
     background-color: #1b2837;
     border-radius: 50%;
-}
-
-.cell {
-
 }
 
 .danger {
@@ -127,4 +131,8 @@ button {
 
 .team {
     background-color: yellow;
+}
+
+.victory {
+
 }
