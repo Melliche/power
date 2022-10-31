@@ -4,6 +4,12 @@
   "description": "jeu puissance 4",
   "main": "app.js",
   "scripts": {
+    "deploy": "npm run build-clean && npm run build-sass && npm run build-autoprefix && npm run build-cleancss && npm compress images",
+    "build-autoprefix": "postcss --use autoprefixer --map false --output public/css/styles.css public/css/styles.css",
+    "build-cleancss": "cleancss -o public/css/styles.css public/css/styles.css",
+    "build-clean": "rimraf css",
+    "build-sass": "node-sass --output-style expanded --source-map true public/sass/styles.sass public/css/styles.css",
+    "watch": "npm run build-sass -- --watch",
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,6 +26,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "node-sass": "^7.0.3",
     "path": "^0.12.7",
     "socket.io": "^4.5.3"
   }

@@ -35,7 +35,8 @@ socket.on("list rooms", (rooms) => {
     rooms.forEach((room) => {
       if (room.players.length !== 2) {
         html += `<li class="room">
-                <p class="p-room">Salon de ${room.players[0].username} - ${room.id}</p>
+                <p class="title-room">${room.players[0].username}</p>
+                <p class="p-room">${room.players.length}  / 2 dans <br> le salon ${room.id}</p>
                 <button class="join-room" data-room="${room.id}">Rejoindre</button>
              </li>`;
       }
@@ -203,6 +204,7 @@ function startGame(players) {
   header.style.display = 'none';
   info.classList.remove('none')
   game.classList.remove("none");
+  victory.classList.add('none');
 
   const ennemyPlayer = players.find((p) => p.socketId != player.socketId);
   ennemyUsername = ennemyPlayer.username;
