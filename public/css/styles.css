@@ -5,6 +5,10 @@ body {
   /* z-index: ; */
 }
 
+.none {
+  display: none !important;
+}
+
 button {
   background-color: #00AE06;
   border: none;
@@ -25,6 +29,7 @@ button {
 }
 
 .header .title {
+  margin-top: 3rem;
   font-weight: 550;
   color: #FF0000;
   font-size: 4rem;
@@ -59,13 +64,14 @@ button {
   font-size: 2rem;
   font-weight: bolder;
   margin: 1rem;
+  color: white;
 }
 
 .header .rooms-card .roomlist {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .header .rooms-card .roomlist .room {
@@ -79,15 +85,16 @@ button {
   border: 2.5px solid #555;
   border-radius: 4px;
   margin: .7rem;
+  padding: 0.3rem;
 }
 
 .header .rooms-card .roomlist .room .title-room {
+  margin: 1rem;
   font-size: 2rem;
   font-weight: 600;
 }
 
 .header .rooms-card .roomlist .room .p-room {
-  margin: 1rem;
   text-align: center;
   font-weight: bolder;
   font-style: oblique;
@@ -101,6 +108,39 @@ button {
   height: 100vh;
   width: 100vw;
   /* transition: background-color 3s ease; */
+}
+
+.game-section .info {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.game-section .info .player1 {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 1rem;
+}
+
+.game-section .info .player1 .name {
+  font-size: 2rem;
+  color: white;
+}
+
+.game-section .info .player2 {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 1rem;
+}
+
+.game-section .info .player2 .name {
+  font-size: 2rem;
+  color: white;
 }
 
 .game-section .game {
@@ -139,7 +179,19 @@ button {
 }
 
 .game-section .game .column .team {
-  background-color: yellow;
+  background-color: #E6FF00;
+}
+
+.game-section .victory {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.game-section .victory .h2 {
+  margin: 1.5rem;
+  font-size: 2.5rem;
 }
 
 /*# sourceMappingURL=styles.css.map */

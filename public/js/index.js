@@ -8,6 +8,7 @@ const player = {
   turn: false,
   playedCell: "",
   win: false,
+  score: 0,
 };
 
 let board = [];
@@ -92,8 +93,9 @@ columns.forEach((column) => {
 
       if (player.win) {
         game.classList.add('none');
+        info.classList.add('none')
         victory.classList.remove('none');
-        document.getElementById('h2').innerHTML = 'VOUS AVEZ GAGN2';
+        document.getElementById('h2').innerHTML = 'Vous avez gagné';
       }
     }
   };
@@ -119,8 +121,9 @@ socket.on("play", (ennemyPlayer) => {
     player.turn = true;
     if (ennemyPlayer.win) {
       game.classList.add('none');
+      info.classList.add('none')
       victory.classList.remove('none');
-      document.getElementById('h2').innerHTML = 'VOUS AVEZ PERDU';
+      document.getElementById('h2').innerHTML = 'Vous avez perdu';
     }
   }
   
@@ -147,9 +150,6 @@ function getWinner(columcell, cell) {
     board[columcell][i] == player.username ? equal++ : (equal = 0);
     if (equal >= 4) {
       console.log(board[columcell][i], " GAGNANT VERTICAL");
-      game.classList.add('none');
-      victory.classList.remove('none');
-      document.getElementById('h2').innerHTML = 'YOUYOUYOYU';
       equal = 0;
       return true;
     }
@@ -208,6 +208,10 @@ function startGame(players) {
 
   const ennemyPlayer = players.find((p) => p.socketId != player.socketId);
   ennemyUsername = ennemyPlayer.username;
+
+  document.getElementById('player1').innerHTML = player.username
+  document.getElementById('player2').innerHTML = ennemyPlayer.username
+  
 }
 
 function restartGame(players = null) {
