@@ -171,10 +171,12 @@ function getWinner(columcell, cell) {
   let columnIndex = parseInt(columcell) - parseInt(cell);
   for (
     let i = Math.max(columnIndex, 0);
-    i < Math.min(board[columcell].length, board.length + columnIndex);
+    i <= Math.min(board[columcell].length, board.length + columnIndex);
     i++
   ) {
+    console.log(board[i][i - columnIndex])
     board[i][i - columnIndex] == player.username ? equal++ : (equal = 0);
+    console.log(equal)
     if (equal >= 4) {
       console.log("DIAGDIAGDIAGDIAG");
       equal = 0;
@@ -187,7 +189,7 @@ function getWinner(columcell, cell) {
   columnIndex = parseInt(columcell) + parseInt(cell);
   for (
     let i = Math.max(columnIndex - board.length + 1, 0);
-    i < Math.min(board[columcell].length, columnIndex + 1);
+    i <= Math.min(board[columcell].length, columnIndex + 1);
     i++
   ) {
     board[i][columnIndex - i] == player.username ? equal++ : (equal = 0);
