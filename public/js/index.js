@@ -149,7 +149,6 @@ function getWinner(columcell, cell) {
   for (let i = 0; i < board[columcell].length; i++) {
     board[columcell][i] == player.username ? equal++ : (equal = 0);
     if (equal >= 4) {
-      console.log(board[columcell][i], " GAGNANT VERTICAL");
       equal = 0;
       return true;
     }
@@ -159,7 +158,6 @@ function getWinner(columcell, cell) {
   for (let i = 0; i < board.length; i++) {
     board[i][cell] == player.username ? equal++ : (equal = 0);
     if (equal >= 4) {
-      console.log(board[i][cell], " GAGNANT HORIZONTAL");
       equal = 0;
       return true;
     }
@@ -174,11 +172,8 @@ function getWinner(columcell, cell) {
     i <= Math.min(board[columcell].length, board.length + columnIndex);
     i++
   ) {
-    console.log(board[i][i - columnIndex])
     board[i][i - columnIndex] == player.username ? equal++ : (equal = 0);
-    console.log(equal)
     if (equal >= 4) {
-      console.log("DIAGDIAGDIAGDIAG");
       equal = 0;
       return true;
     }
@@ -194,7 +189,6 @@ function getWinner(columcell, cell) {
   ) {
     board[i][columnIndex - i] == player.username ? equal++ : (equal = 0);
     if (equal >= 4) {
-      console.log("ANTIANTIANTIANTIANTIANTIANTI");
       equal = 0;
       return true;
     }
@@ -217,9 +211,7 @@ function startGame(players) {
 }
 
 function restartGame(players = null) {
-  console.log('restart')
   if (player.host && !players) {
-    console.log('efez')
       player.turn = true;
       socket.emit('play again', player.roomId);
   }
@@ -240,7 +232,6 @@ function restartGame(players = null) {
 
 // Quand un joueur rejoins une room et qu'il n'est pas l'host
 const joinRoom = function () {
-  console.log("joinroom");
   if (input.value !== "" && input.value.length >= 3) {
     player.username = input.value;
     player.socketId = socket.id;
@@ -258,7 +249,6 @@ function table(rows = 6, columns = 7) {
     board[i] = Array(rows).fill(0);
     for (let j = 0; j < rows; j++) {
       let cellToClear = `${i}-${j}`;
-      console.log(cellToClear)
       document.getElementById(`${cellToClear}`).classList.remove('danger', 'team');
     }
     // console.log(document.querySelectorAll('.cell')) 
