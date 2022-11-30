@@ -104,17 +104,12 @@ columns.forEach((column) => {
 socket.on("play", (ennemyPlayer) => {
   if (ennemyPlayer.socketId !== player.socketId && !ennemyPlayer.turn) {
     columcell = ennemyPlayer.playedCell.substring(0, 1);
-    // let cell = ennemyPlayer.playedCell.substring(2)
-    // console.log(board)
     for (let i = 0; i < board[columcell].length; i++) {
       if (board[columcell][i] == 0) {
         board[columcell][i] = ennemyPlayer.username;
         let playedCell = `${columcell}-${i}`;
         player.playedCell = playedCell;
-        // console.log(board)
         document.getElementById(`${playedCell}`).classList.add("danger");
-
-        // getWinner(columcell, playedCell.substring(2));
         break;
       }
     }
@@ -243,6 +238,7 @@ const joinRoom = function () {
   }
 };
 
+// generation du tableau
 function table(rows = 6, columns = 7) {
   board = [];
   for (let i = 0; i < columns; i++) {
@@ -251,19 +247,7 @@ function table(rows = 6, columns = 7) {
       let cellToClear = `${i}-${j}`;
       document.getElementById(`${cellToClear}`).classList.remove('danger', 'team');
     }
-    // console.log(document.querySelectorAll('.cell')) 
-    // let column = document.createElement('div')
-    // column.classList.add('blue');
-    // column.setAttribute('id', `row-${i}`);
-    // game.appendChild(column)
-    // for(let i = 0; i < columns; i++){
-      //     let green = document.createElement('div')
-      //     green.setAttribute('id', `col-${i}`, 'cell');
-      //     green.classList.add('green', 'cell');
-      //     column.appendChild(green)
-      
-      // }
-    }
+  }
 }
 
 // console.log(board)
