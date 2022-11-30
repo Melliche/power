@@ -206,17 +206,27 @@ function startGame(players) {
 }
 
 function restartGame(players = null) {
-  if (player.host && !players) {
-      player.turn = true;
+  if (players) {
+    players.forEach((player) => {
+      player.turn = false;
+    })
+    let playerturn = Math.floor(Math.random() * 2);
+    console.log(playerturn)
+    console.log(players)
+    players[playerturn].turn = true;
+  }
+  console.log(players)
+  if (!players) {
+      // player.turn = true;
       socket.emit('play again', player.roomId);
   }
 
   const cells = document.getElementsByClassName('cell');
 
-  if (!player.host) {
-      player.turn = false;
-  }
-
+  // if (!player.host) {
+  //     player.turn = false;
+  // }
+  // ennemyPlayer.win = false
   player.win = false;
 
   if (players) {
