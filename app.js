@@ -72,7 +72,19 @@ io.on("connection", (socket) => {
     const room = rooms.find((r) => r.id === roomId);
 
     if (room && room.players.length === 2) {
-      io.to(room.id).emit("play again", room.players);
+      let players = room.players;
+
+      players.forEach((player) => {
+        player.turn = false;
+        player.win = false;
+      })
+      let playerturn = Math.floor(Math.random() * 2);
+      console.log(playerturn)
+      console.log(players)
+      players[playerturn].turn = true;
+
+
+      io.to(room.id).emit("play again", players);
     }
   });
 

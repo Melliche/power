@@ -1,6 +1,6 @@
 const socket = io();
 
-const player = {
+let player = {
   host: false,
   roomId: null,
   username: "",
@@ -11,6 +11,8 @@ const player = {
   score: 0,
 };
 
+let playersInRoom;
+let ennemyPlayer;
 let board = [];
 
 const form = document.getElementById("form");
@@ -75,7 +77,8 @@ check.addEventListener("click", function (e) {
 columns.forEach((column) => {
   column.onclick = function () {
     let playedCell = this.getAttribute("id");
-    if (player.turn) {
+    console.log(player.turn);
+    if (player.turn === true) {
       let columnIndex = playedCell.substring(4);
       for (let i = 0; i < board[columnIndex].length; i++) {
         if (board[columnIndex][i] == 0) {
@@ -135,6 +138,7 @@ socket.on("start game", (players) => {
 
 socket.on('play again', (players) => {
   console.log('socket on')
+  player = players.find((p) => p.socketId == player.socketId);
   restartGame(players);
 })
 
@@ -192,12 +196,13 @@ function getWinner(columcell, cell) {
 
 function startGame(players) {
   table();
+  playersInRoom = players;
   header.style.display = 'none';
   info.classList.remove('none')
   game.classList.remove("none");
   victory.classList.add('none');
 
-  const ennemyPlayer = players.find((p) => p.socketId != player.socketId);
+  ennemyPlayer = playersInRoom.find((p) => p.socketId != player.socketId);
   ennemyUsername = ennemyPlayer.username;
 
   document.getElementById('player1').innerHTML = player.username
@@ -206,15 +211,17 @@ function startGame(players) {
 }
 
 function restartGame(players = null) {
-  if (players) {
-    players.forEach((player) => {
-      player.turn = false;
-    })
-    let playerturn = Math.floor(Math.random() * 2);
-    console.log(playerturn)
-    console.log(players)
-    players[playerturn].turn = true;
-  }
+  playersInRoom = players;
+
+  // if (players) {
+  //   players.forEach((player) => {
+  //     player.turn = false;
+  //   })
+  //   let playerturn = Math.floor(Math.random() * 2);
+  //   console.log(playerturn)
+  //   console.log(players)
+  //   players[playerturn].turn = true;
+  // }
   console.log(players)
   if (!players) {
       // player.turn = true;
