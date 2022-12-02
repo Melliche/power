@@ -61,7 +61,6 @@ form.addEventListener("submit", function (e) {
   player.username = input.value;
   player.socketId = socket.id;
   player.host = true;
-  player.turn = true;
   roomsCard.style.display = "none";
   roomsList.style.display = "none";
 
@@ -78,6 +77,7 @@ columns.forEach((column) => {
   column.onclick = function () {
     let playedCell = this.getAttribute("id");
     console.log(player.turn);
+    console.log(playersInRoom)
     if (player.turn === true) {
       let columnIndex = playedCell.substring(4);
       for (let i = 0; i < board[columnIndex].length; i++) {
@@ -132,6 +132,7 @@ socket.on("join room", (roomId) => {
 });
 
 socket.on("start game", (players) => {
+  playersInRoom = players;
   console.log(players);
   startGame(players);
 });
@@ -197,6 +198,7 @@ function getWinner(columcell, cell) {
 function startGame(players) {
   table();
   playersInRoom = players;
+  player = players.find((p) => p.socketId == player.socketId)
   header.style.display = 'none';
   info.classList.remove('none')
   game.classList.remove("none");

@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
     io.to(socket.id).emit("join room", room.id);
 
     if (room.players.length === 2) {
-      io.to(room.id).emit("start game", room.players);
+      io.to(room.id).emit("start game", playerSetToStart());
     }
   });
 
@@ -72,19 +72,7 @@ io.on("connection", (socket) => {
     const room = rooms.find((r) => r.id === roomId);
 
     if (room && room.players.length === 2) {
-      let players = room.players;
-
-      players.forEach((player) => {
-        player.turn = false;
-        player.win = false;
-      })
-      let playerturn = Math.floor(Math.random() * 2);
-      console.log(playerturn)
-      console.log(players)
-      players[playerturn].turn = true;
-
-
-      io.to(room.id).emit("play again", players);
+      io.to(room.id).emit("play again", playerSetToStart);
     }
   });
 
@@ -92,6 +80,17 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
+
+function playerSetToStart(players) {
+  updatePlayers = players;
+  updatePlayers.forEach((player) => {
+    player.turn = false;
+    player.win = false;
+  })
+  let playerturn = Math.floor(Math.random() * 2);
+  updatePlayers[playerturn].turn = true;
+  return updatePlayers
+}
 
 function createRoom(player) {
   const room = { id: roomId(), players: [] };
