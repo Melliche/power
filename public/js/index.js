@@ -9,6 +9,7 @@ let player = {
   playedCell: "",
   win: false,
   score: 0,
+  wantRestart: false,
 };
 
 let playersInRoom;
@@ -27,7 +28,8 @@ const game = document.getElementById("game");
 // const blue = document.getElementById("blue");
 const info = document.getElementById('info');
 const victory = document.getElementById('victory');
-
+const restartButton = document.getElementById('restartButton');
+const waitingPlayer = document.getElementById('waitingPlayer');
 
 socket.emit("get rooms");
 
@@ -36,7 +38,7 @@ socket.on("list rooms", (rooms) => {
   if (rooms.length > 0) {
     console.log("rooms");
     rooms.forEach((room) => {
-      if (room.players.length !== 2) {
+      if (room.players.length === 1) {
         html += `<li class="room">
                 <p class="title-room">${room.players[0].username}</p>
                 <p class="p-room">${room.players.length}  / 2 dans <br> le salon ${room.id}</p>
@@ -78,6 +80,7 @@ columns.forEach((column) => {
     let playedCell = this.getAttribute("id");
     console.log(player.turn);
     console.log(playersInRoom)
+    socket.emit("info");
     if (player.turn === true) {
       let columnIndex = playedCell.substring(4);
       for (let i = 0; i < board[columnIndex].length; i++) {
@@ -143,6 +146,63 @@ socket.on('play again', (players) => {
   restartGame(players);
 })
 
+socket.on('refreshRoom', (p) => {
+  // ennemyPlayer = players.find((p) => p.socketId != player.socketId)
+  playersInRoom.find((p) => p.socketId != player.socketId) = p;
+});
+
+function restartGame(players = null, clicked = false) {
+  if (!players) {
+    if (clicked === true) {
+      player.wantRestart = true;
+      restartButton.classList.add('none');
+      waitingPlayer.classList.remove('none');
+    }
+    socket.emit('play again', player);
+  }
+  
+  if (players) {
+    if (players.length === 2) {
+      startGame(players);
+    }
+  }
+}
+
+function startGame(players) {
+  table();
+  playersInRoom = players;
+  player = players.find((p) => p.socketId == player.socketId)
+  header.style.display = 'none';
+  info.classList.remove('none');
+  game.classList.remove("none");
+  victory.classList.add('none');
+  restartButton.classList.remove('none');
+  waitingPlayer.classList.add('none');
+
+  
+  ennemyPlayer = playersInRoom.find((p) => p.socketId != player.socketId);
+  
+  document.getElementById('player1').innerHTML = player.username;
+  document.getElementById('player2').innerHTML = ennemyPlayer.username;
+  
+}
+
+
+
+
+// Quand un joueur rejoins une room et qu'il n'est pas l'host
+const joinRoom = function () {
+  if (input.value !== "" && input.value.length >= 3) {
+    player.username = input.value;
+    player.socketId = socket.id;
+    player.roomId = this.dataset.room;
+    socket.emit("playerData", player);
+    
+    roomsCard.style.display = "none";
+    roomsList.style.display = "none";
+  }
+};
+
 function getWinner(columcell, cell) {
   let equal = 0;
   //vertical
@@ -194,68 +254,6 @@ function getWinner(columcell, cell) {
     }
   }
 }
-
-function startGame(players) {
-  table();
-  playersInRoom = players;
-  player = players.find((p) => p.socketId == player.socketId)
-  header.style.display = 'none';
-  info.classList.remove('none')
-  game.classList.remove("none");
-  victory.classList.add('none');
-
-  ennemyPlayer = playersInRoom.find((p) => p.socketId != player.socketId);
-  ennemyUsername = ennemyPlayer.username;
-
-  document.getElementById('player1').innerHTML = player.username
-  document.getElementById('player2').innerHTML = ennemyPlayer.username
-  
-}
-
-function restartGame(players = null) {
-  playersInRoom = players;
-
-  // if (players) {
-  //   players.forEach((player) => {
-  //     player.turn = false;
-  //   })
-  //   let playerturn = Math.floor(Math.random() * 2);
-  //   console.log(playerturn)
-  //   console.log(players)
-  //   players[playerturn].turn = true;
-  // }
-  console.log(players)
-  if (!players) {
-      // player.turn = true;
-      socket.emit('play again', player.roomId);
-  }
-
-  const cells = document.getElementsByClassName('cell');
-
-  // if (!player.host) {
-  //     player.turn = false;
-  // }
-  // ennemyPlayer.win = false
-  player.win = false;
-
-  if (players) {
-      startGame(players);
-  }
-}
-
-
-// Quand un joueur rejoins une room et qu'il n'est pas l'host
-const joinRoom = function () {
-  if (input.value !== "" && input.value.length >= 3) {
-    player.username = input.value;
-    player.socketId = socket.id;
-    player.roomId = this.dataset.room;
-    socket.emit("playerData", player);
-
-    roomsCard.style.display = "none";
-    roomsList.style.display = "none";
-  }
-};
 
 // generation du tableau
 function table(rows = 6, columns = 7) {

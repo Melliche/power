@@ -96,7 +96,8 @@
       </div>
       <div class="victory none" id="victory">
         <h2 class="h2" id="h2"></h2>
-        <button onclick="restartGame()">Rejouer</button>
+        <button onclick="restartGame(null, true)" id="restartButton" class="none">Rejouer</button>
+        <h2 class="h2 none waitingPlayer" id="waitingPlayer">En attente de l'adversaire <div class="lds-hourglass"></div></h2>
       </div>
     </section>
 

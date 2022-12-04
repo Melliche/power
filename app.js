@@ -43,10 +43,8 @@ io.on("connection", (socket) => {
       room = rooms.find((r) => r.id === player.roomId);
 
       if (room === undefined) {
-        console.log("mince");
         return;
       }
-      console.log("ok");
       player.roomId = room.id;
       room.players.push(player);
     }
@@ -56,8 +54,16 @@ io.on("connection", (socket) => {
     io.to(socket.id).emit("join room", room.id);
 
     if (room.players.length === 2) {
-      io.to(room.id).emit("start game", playerSetToStart());
+      io.to(room.id).emit("start game", playerSetToStart(room.players));
     }
+  });
+
+  socket.on("refreshRoom", (p) => {
+    io.to(p.roomId).emit("refreshRoom", p);
+  });
+
+  socket.on("info", () => {
+    // rooms.forEach((r) => console.log(r.players));
   });
 
   socket.on("get rooms", () => {
@@ -68,11 +74,16 @@ io.on("connection", (socket) => {
     io.to(player.roomId).emit("play", player);
   });
 
-  socket.on("play again", (roomId) => {
-    const room = rooms.find((r) => r.id === roomId);
+  socket.on("play again", (player) => {
+    let room = rooms.find((r) => r.id === player.roomId);
+    // TODO verif que le joueur ne puisse pas demander de restart plusieurs fois
+    if (player.wantRestart === true) {
+      room.wantRestart++
+    }
 
-    if (room && room.players.length === 2) {
-      io.to(room.id).emit("play again", playerSetToStart);
+    if (room && room.players.length === 2 && room.wantRestart === 2) {
+      room.wantRestart = 0;
+      io.to(room.id).emit("play again", playerSetToStart(room.players));
     }
   });
 
@@ -86,14 +97,14 @@ function playerSetToStart(players) {
   updatePlayers.forEach((player) => {
     player.turn = false;
     player.win = false;
-  })
+  });
   let playerturn = Math.floor(Math.random() * 2);
   updatePlayers[playerturn].turn = true;
   return updatePlayers
 }
 
 function createRoom(player) {
-  const room = { id: roomId(), players: [] };
+  const room = { id: roomId(), players: [], wantRestart: 0 };
 
   player.roomId = room.id;
   console.log("create room");
