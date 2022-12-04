@@ -92,6 +92,19 @@ io.on("connection", (socket) => {
   });
 });
 
+
+// TODO gérer la suppression d'une room quand aucun joueur n'est dedans
+const interval = setInterval(function() {
+  if (rooms) {
+    rooms.forEach((room) => {
+      diff = Math.abs(new Date - new Date(room.createDate));
+      if (diff >= 60000 && room.players.length < 2) {
+        rooms.splice(room, 1);
+      }
+    })
+  }
+}, 60000);
+
 function playerSetToStart(players) {
   updatePlayers = players;
   updatePlayers.forEach((player) => {
@@ -104,7 +117,7 @@ function playerSetToStart(players) {
 }
 
 function createRoom(player) {
-  const room = { id: roomId(), players: [], wantRestart: 0 };
+  const room = { id: roomId(), players: [], wantRestart: 0, createDate: new Date };
 
   player.roomId = room.id;
   console.log("create room");
