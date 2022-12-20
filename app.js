@@ -26,6 +26,7 @@ server.listen(port, () => {
 let rooms = [];
 
 io.on("connection", (socket) => {
+  console.log(socket.id)
   console.log("a user connected");
 
   socket.on("name", (player) => {
@@ -34,19 +35,20 @@ io.on("connection", (socket) => {
 
   socket.on("playerData", (player) => {
     let room = null;
-
     if (!player.roomId) {
       room = createRoom(player);
-      console.log(player);
       console.log(`[create room ] - ${room.id} - ${player.username}`);
     } else {
       room = rooms.find((r) => r.id === player.roomId);
-
       if (room === undefined) {
         return;
       }
-      player.roomId = room.id;
-      room.players.push(player);
+      let playerInRoom = room.players[0]
+      //vérifie que le même joueur ne puisse pas rejoindre sa room plusieurs fois
+      if (playerInRoom.socketId !== player.socketId) { 
+        player.roomId = room.id;
+        room.players.push(player);
+      }
     }
 
     socket.join(room.id);
@@ -71,6 +73,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("play", (player) => {
+    let room = rooms.find((r) => r.id === player.roomId);
+    console.log(room.players);
+
     io.to(player.roomId).emit("play", player);
   });
 
@@ -88,6 +93,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    // let room = rooms.find((r) => r.id === player.roomId);
+    console.log(socket.id)
     console.log("user disconnected");
   });
 });

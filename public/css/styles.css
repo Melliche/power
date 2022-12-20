@@ -102,6 +102,13 @@ button {
   font-style: oblique;
 }
 
+.header .h2 {
+  margin: 1.5rem;
+  font-size: 2.5rem;
+  color: white;
+  font-weight: bolder;
+}
+
 .game-section {
   display: flex;
   justify-content: center;
@@ -196,7 +203,7 @@ button {
   font-weight: bolder;
 }
 
-.game-section .victory .waitingPlayer {
+.waitingEnemy {
   display: flex;
   align-items: center;
 }

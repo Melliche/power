@@ -23,6 +23,10 @@
         <h2 class="h2">Salons disponibles</h2>
         <ul class="roomlist" id="rooms-list"></ul>
       </div>
+      <h2 class="h2 none waitingEnemy" id="waitingPlayer">
+        En attente d'un adversaire
+        <div class="lds-hourglass"></div>
+      </h2>
       <button id="check">Check</button>
     </header>
 
@@ -34,7 +38,6 @@
         <div class="player2">
           <p class="name" id="player2"></p>
         </div>
-
       </div>
       <div class="game none" id="game">
         <div class="column" id="row-0">
@@ -96,8 +99,17 @@
       </div>
       <div class="victory none" id="victory">
         <h2 class="h2" id="h2"></h2>
-        <button onclick="restartGame(null, true)" id="restartButton" class="none">Rejouer</button>
-        <h2 class="h2 none waitingPlayer" id="waitingPlayer">En attente de l'adversaire <div class="lds-hourglass"></div></h2>
+        <button
+          onclick="restartGame(null, true)"
+          id="restartButton"
+          class="none"
+        >
+          Rejouer
+        </button>
+        <h2 class="h2 none waitingEnemy" id="waitingEnemy">
+          En attente de l'adversaire
+          <div class="lds-hourglass"></div>
+        </h2>
       </div>
     </section>
 
