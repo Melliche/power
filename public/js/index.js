@@ -67,7 +67,6 @@ form.addEventListener("submit", function (e) {
   player.host = true;
   form.style.display = 'none';
   roomsCard.style.display = "none";
-  // roomsList.style.display = "none";
   waitingPlayer.classList.remove('none');
   socket.emit("playerData", player);
 });
@@ -100,7 +99,7 @@ columns.forEach((column) => {
     if (player.turn === true) {
       let columnIndex = playedCell.substring(4);
       for (let i = 0; i < board[columnIndex].length; i++) {
-        if (board[columnIndex][i] == 0) {
+        if (board[columnIndex][i] == 0) { //verif si la case est jouable
           board[columnIndex][i] = player.username;
           playedCell = `${columnIndex}-${i}`;
           console.log(playedCell)
@@ -123,7 +122,7 @@ columns.forEach((column) => {
   };
 });
 
-socket.on("play", (ennemyPlayer) => {
+socket.on("play", (ennemyPlayer, cellsPlayed) => {
   if (ennemyPlayer.socketId !== player.socketId && !ennemyPlayer.turn) {
     columcell = ennemyPlayer.playedCell.substring(0, 1);
     for (let i = 0; i < board[columcell].length; i++) {
@@ -142,6 +141,12 @@ socket.on("play", (ennemyPlayer) => {
       victory.classList.remove('none');
       document.getElementById('h2').innerHTML = 'Vous avez perdu';
     }
+  }
+
+  if (cellsPlayed === 42 && !player.win && !ennemyPlayer.win) {
+    game.classList.add('none');
+    info.classList.add('none')
+    victory.classList.remove('none');
   }
   
 });
@@ -203,10 +208,6 @@ function startGame(players) {
   document.getElementById('player2').innerHTML = ennemyPlayer.username;
   
 }
-
-
-
-
 
 function getWinner(columcell, cell) {
   let equal = 0;

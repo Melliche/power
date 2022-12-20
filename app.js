@@ -74,9 +74,13 @@ io.on("connection", (socket) => {
 
   socket.on("play", (player) => {
     let room = rooms.find((r) => r.id === player.roomId);
+    room.playedCell++
+    // if (room.playedCell === 42) {
+
+    // }
     console.log(room.players);
 
-    io.to(player.roomId).emit("play", player);
+    io.to(player.roomId).emit("play", player, room.playedCell);
   });
 
   socket.on("play again", (player) => {
@@ -88,6 +92,7 @@ io.on("connection", (socket) => {
 
     if (room && room.players.length === 2 && room.wantRestart === 2) {
       room.wantRestart = 0;
+      room.playedCell = 0;
       io.to(room.id).emit("play again", playerSetToStart(room.players));
     }
   });
@@ -124,7 +129,7 @@ function playerSetToStart(players) {
 }
 
 function createRoom(player) {
-  const room = { id: roomId(), players: [], wantRestart: 0, createDate: new Date };
+  const room = { id: roomId(), players: [], wantRestart: 0, playedCell: 0, createDate: new Date };
 
   player.roomId = room.id;
   console.log("create room");
