@@ -37,6 +37,7 @@ io.on("connection", (socket) => {
     let room = null;
     if (!player.roomId) {
       room = createRoom(player);
+      io.emit("list rooms", rooms); // actualise la liste des rooms
       console.log(`[create room ] - ${room.id} - ${player.username}`);
     } else {
       room = rooms.find((r) => r.id === player.roomId);

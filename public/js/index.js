@@ -48,7 +48,7 @@ socket.on("list rooms", (rooms) => {
       }
     });
   }
-  if (html !== "") {
+  if (html !== "" && !player.host) {
     roomsCard.style.display = "contents";
     roomsList.innerHTML = html;
 
