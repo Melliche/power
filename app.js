@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
 
   socket.on("playerData", (player) => {
     let room = null;
-    if (!player.roomId) {
+    if (!player.roomId && player.username.length >= 3) {
       room = createRoom(player);
       io.emit("list rooms", rooms); // actualise la liste des rooms
       console.log(`[create room ] - ${room.id} - ${player.username}`);
@@ -52,9 +52,11 @@ io.on("connection", (socket) => {
       }
     }
 
-    socket.join(room.id);
+    if (player.username.length >= 3) {
+      socket.join(room.id);
+      io.to(socket.id).emit("join room", room.id);
+    }
 
-    io.to(socket.id).emit("join room", room.id);
 
     if (room.players.length === 2) {
       io.to(room.id).emit("start game", playerSetToStart(room.players));

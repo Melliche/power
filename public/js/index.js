@@ -64,14 +64,15 @@ socket.on("list rooms", (rooms) => {
 // Creation d'une room
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-  
-  player.username = input.value;
-  player.socketId = socket.id;
-  player.host = true;
-  form.style.display = 'none';
-  roomsCard.style.display = "none";
-  waitingPlayer.classList.remove('none');
-  socket.emit("playerData", player);
+  if (input.value !== "" && input.value.length >= 3) {
+    player.username = input.value;
+    player.socketId = socket.id;
+    player.host = true;
+    form.style.display = 'none';
+    roomsCard.style.display = "none";
+    waitingPlayer.classList.remove('none');
+    socket.emit("playerData", player);
+  }
 });
 
 check.addEventListener("click", function (e) {
@@ -86,7 +87,7 @@ const joinRoom = function () {
     player.socketId = socket.id;
     player.roomId = this.dataset.room;
     socket.emit("playerData", player);
-    
+
     roomsCard.style.display = "none";
     roomsList.style.display = "none";
   }
@@ -151,7 +152,7 @@ socket.on("play", (ennemyPlayer, cellsPlayed) => {
     info.classList.add('none')
     victory.classList.remove('none');
   }
-  
+
 });
 
 socket.on("join room", (roomId) => {
@@ -184,7 +185,7 @@ function restartGame(players = null, clicked = false) {
     }
     socket.emit('play again', player);
   }
-  
+
   if (players) {
     if (players.length === 2) {
       startGame(players);
@@ -204,12 +205,12 @@ function startGame(players) {
   waitingPlayer.classList.add('none');
   waitingEnemy.classList.add('none');
 
-  
+
   ennemyPlayer = playersInRoom.find((p) => p.socketId != player.socketId);
-  
+
   document.getElementById('player1').innerHTML = player.username;
   document.getElementById('player2').innerHTML = ennemyPlayer.username;
-  
+
 }
 
 function getWinner(columcell, cell) {
