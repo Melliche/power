@@ -99,8 +99,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    // let room = rooms.find((r) => r.id === player.roomId);
-    console.log(socket.id)
+    // let room = rooms.find((r) => r.id === players.find((p) => p.roomId));
+    let room = findRoomById(socket.id, rooms)
+    if (room) {
+      console.log(room.id)
+      rooms.splice(room, 1);
+      io.emit("list rooms", rooms); // actualise la liste des rooms
+    }
+    // console.log(socket.id)
     console.log("user disconnected");
   });
 });
@@ -117,6 +123,19 @@ const interval = setInterval(function() {
     })
   }
 }, 60000);
+
+function findRoomById(playerId, rooms) {
+  for (let room of rooms) {
+    for (let player of room.players) {
+      if (player.socketId === playerId) {
+        if (player.roomId) {
+          return room;
+        }
+      }
+    }
+  }
+  return null;
+}
 
 function playerSetToStart(players) {
   updatePlayers = players;

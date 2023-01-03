@@ -56,6 +56,9 @@ socket.on("list rooms", (rooms) => {
       element.addEventListener("click", joinRoom, false);
     }
   }
+  if (rooms.length < 1) {
+    roomsList.innerHTML = '';
+  }
 });
 
 // Creation d'une room
