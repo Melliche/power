@@ -35,7 +35,7 @@ const info = document.getElementById('info');
 const victory = document.getElementById('victory');
 const restartButton = document.getElementById('restartButton');
 const waitingEnemy = document.getElementById('waitingEnemy');
-// const gameSection = document.getElementById('game-section');
+const wantReplay = document.getElementById('wantReplay');
 
 socket.emit("get rooms");
 
@@ -174,12 +174,12 @@ socket.on("start game", (players) => {
 
 socket.on('play again', (players, enemyWantRestart = false) => {
   console.log('socket play again')
-  console.log(players)
   if (players) {
     player = players.find((p) => p.socketId == player.socketId);
   }
+  console.log(enemyWantRestart)
   if (enemyWantRestart && !player.wantRestart) {
-    victory.innerHTML += `<h2 class="h2">Votre adversaire veut rejouer</h2>`
+      wantReplay.style.display = 'contents';
   }
   restartGame(players);
 })
@@ -192,6 +192,7 @@ socket.on('refreshRoom', (p) => {
 
 function restartGame(players = null, clicked = false) {
   if (!players) {
+    player.wantRestart = false;
     if (clicked === true) {
       player.wantRestart = true;
       restartButton.classList.add('none');
@@ -214,6 +215,7 @@ function startGame(players) {
   header.style.display = 'none';
   info.classList.remove('none');
   game.classList.remove("none");
+  wantReplay.style.display = 'none';
   victory.classList.add('none');
   restartButton.classList.remove('none');
   waitingPlayer.classList.add('none');
