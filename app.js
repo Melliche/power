@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
   console.log("a user connected");
 
   socket.on("name", (player) => {
-    console.log(player + "name");
+    // console.log(player + "name");
   });
 
   socket.on("playerData", (player) => {
@@ -81,17 +81,24 @@ io.on("connection", (socket) => {
     // if (room.playedCell === 42) {
 
     // }
-    console.log(room.players);
+    // console.log(room.players);
 
     io.to(player.roomId).emit("play", player, room.playedCell);
   });
 
   socket.on("play again", (player) => {
     let room = rooms.find((r) => r.id === player.roomId);
+    // console.log(room)
+    let enemyPlayer = room.players.find((p) => p.socketId !== player.socketId);
+    
     // TODO verif que le joueur ne puisse pas demander de restart plusieurs fois
     if (player.wantRestart === true) {
+      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
       room.wantRestart++
+      io.to(enemyPlayer.socketId).emit('play again', null, player.wantRestart);
     }
+
+
 
     if (room && room.players.length === 2 && room.wantRestart === 2) {
       room.wantRestart = 0;
@@ -104,7 +111,7 @@ io.on("connection", (socket) => {
     // let room = rooms.find((r) => r.id === players.find((p) => p.roomId));
     let room = findRoomById(socket.id, rooms)
     if (room) {
-      console.log(room.id)
+      // console.log(room.id)
       rooms.splice(room, 1);
       io.emit("list rooms", rooms); // actualise la liste des rooms
     }
@@ -154,10 +161,10 @@ function createRoom(player) {
   const room = { id: roomId(), players: [], wantRestart: 0, playedCell: 0, createDate: new Date };
 
   player.roomId = room.id;
-  console.log("create room");
+  // console.log("create room");
   room.players.push(player);
   rooms.push(room);
-  console.log(player);
+  // console.log(player);
   return room;
 }
 

@@ -1,5 +1,9 @@
 const socket = io();
 
+socket.on("connect", () => {
+  console.log(socket.id);
+});
+
 let player = {
   host: false,
   roomId: null,
@@ -31,6 +35,7 @@ const info = document.getElementById('info');
 const victory = document.getElementById('victory');
 const restartButton = document.getElementById('restartButton');
 const waitingEnemy = document.getElementById('waitingEnemy');
+// const gameSection = document.getElementById('game-section');
 
 socket.emit("get rooms");
 
@@ -66,6 +71,7 @@ form.addEventListener("submit", function (e) {
   e.preventDefault();
   if (input.value !== "" && input.value.length >= 3) {
     player.username = input.value;
+    console.log(socket.id)
     player.socketId = socket.id;
     player.host = true;
     form.style.display = 'none';
@@ -93,6 +99,7 @@ const joinRoom = function () {
   }
 };
 
+// TODO mettre listener
 // pour chaque clique de cell
 columns.forEach((column) => {
   column.onclick = function () {
@@ -117,7 +124,7 @@ columns.forEach((column) => {
       socket.emit("play", player);
 
       if (player.win) {
-        game.classList.add('none');
+        // game.classList.add('none');
         info.classList.add('none')
         victory.classList.remove('none');
         document.getElementById('h2').innerHTML = 'Vous avez gagné';
@@ -140,7 +147,7 @@ socket.on("play", (ennemyPlayer, cellsPlayed) => {
     }
     player.turn = true;
     if (ennemyPlayer.win) {
-      game.classList.add('none');
+      // game.classList.add('none');
       info.classList.add('none')
       victory.classList.remove('none');
       document.getElementById('h2').innerHTML = 'Vous avez perdu';
@@ -148,7 +155,7 @@ socket.on("play", (ennemyPlayer, cellsPlayed) => {
   }
 
   if (cellsPlayed === 42 && !player.win && !ennemyPlayer.win) {
-    game.classList.add('none');
+    // game.classList.add('none');
     info.classList.add('none')
     victory.classList.remove('none');
   }
@@ -165,11 +172,18 @@ socket.on("start game", (players) => {
   startGame(players);
 });
 
-socket.on('play again', (players) => {
-  console.log('socket on')
-  player = players.find((p) => p.socketId == player.socketId);
+socket.on('play again', (players, enemyWantRestart = false) => {
+  console.log('socket play again')
+  console.log(players)
+  if (players) {
+    player = players.find((p) => p.socketId == player.socketId);
+  }
+  if (enemyWantRestart && !player.wantRestart) {
+    victory.innerHTML += `<h2 class="h2">Votre adversaire veut rejouer</h2>`
+  }
   restartGame(players);
 })
+
 
 socket.on('refreshRoom', (p) => {
   // ennemyPlayer = players.find((p) => p.socketId != player.socketId)

@@ -4,6 +4,7 @@
     justify-content: center
     align-items: center
     flex-direction: column
+    position: relative
     height: 100%
     .info
         display: flex
@@ -60,17 +61,23 @@
         justify-content: center
         align-items: center
         flex-direction: column
+        position: absolute
+        background-color: #f0eff4b0
+        z-index: 99999
+        overflow: hidden
+        height: auto
+        width: auto
+        border-radius: 5px
         .h2
             margin: 1.5rem
-            font-size: 2.5rem
-            color: white
+            font-size: 2rem
+            color: black
             font-weight: bolder
-
 
 .waitingEnemy
     display: flex
     align-items: center
-    
+
 .lds-hourglass
     display: inline-block
     position: relative
@@ -85,8 +92,8 @@
     height: 0
     margin: 7px
     box-sizing: border-box
-    border: 26px solid #fff
-    border-color: #fff transparent #fff transparent
+    border: 26px solid #000000
+    border-color: #000000 transparent #000000 transparent
     animation: lds-hourglass 1.2s infinite
 
 @keyframes lds-hourglass
