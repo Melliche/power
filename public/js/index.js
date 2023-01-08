@@ -99,46 +99,109 @@ const joinRoom = function () {
   }
 };
 
-// TODO mettre listener
-// pour chaque clique de cell
-columns.forEach((column) => {
-  column.onclick = function () {
-    let playedCell = this.getAttribute("id");
-    console.log(player.turn);
-    console.log(playersInRoom)
-    socket.emit("info");
-    if (player.turn === true) {
-      let columnIndex = playedCell.substring(4);
-      for (let i = 0; i < board[columnIndex].length; i++) {
-        if (board[columnIndex][i] == 0) { //verif si la case est jouable
-          board[columnIndex][i] = player.username;
-          playedCell = `${columnIndex}-${i}`;
-          console.log(playedCell)
-          player.playedCell = playedCell;
-          document.getElementById(`${playedCell}`).classList.add("team");
-          player.win = getWinner(columnIndex, playedCell.substring(2));
-          break;
-        }
-      }
-      player.turn = false;
-      socket.emit("play", player);
+function addListener (elements) {
+  elements.forEach((element) => {
+    element.addEventListener('click', columnClick)
+  })
+  elements.forEach((element) => { 
+    element.addEventListener('mouseenter', columnEnter)
+  })
+  elements.forEach((element) => { 
+    element.addEventListener('mouseleave', columnLeave)
+  })
+}
 
-      if (player.win) {
-        // game.classList.add('none');
-        info.classList.add('none')
-        victory.classList.remove('none');
-        document.getElementById('h2').innerHTML = 'Vous avez gagné';
+function removeListener (elements) {
+  elements.forEach((element) => {
+    element.removeEventListener('click', columnClick)
+  })
+  elements.forEach((element) => { 
+    element.removeEventListener('mouseenter', columnEnter)
+  })
+  elements.forEach((element) => { 
+    element.removeEventListener('mouseeleave', columnLeave)
+  })
+}
+
+function columnEnter (e) {
+  e.currentTarget.style.backgroundColor = '#385068';
+}
+
+function columnLeave (e) {
+  e.currentTarget.style.backgroundColor = ''
+}
+
+function columnClick (e) {
+  console.log(e.currentTarget.id)
+  let playedCell = e.currentTarget.id;
+  console.log(player.turn);
+  console.log(playersInRoom)
+  socket.emit("info");
+  if (player.turn === true) {
+    let columnIndex = playedCell.substring(4);
+    for (let i = 0; i < board[columnIndex].length; i++) {
+      if (board[columnIndex][i] == 0) { //verif si la case est jouable
+        board[columnIndex][i] = player.socketId;
+        playedCell = `${columnIndex}-${i}`;
+        console.log(playedCell)
+        player.playedCell = playedCell;
+        document.getElementById(`${playedCell}`).classList.add("team");
+        player.win = getWinner(columnIndex, playedCell.substring(2));
+        break;
       }
     }
-  };
-});
+    player.turn = false;
+    removeListener(columns);
+    socket.emit("play", player);
+
+    if (player.win) {
+      // game.classList.add('none');
+      info.classList.add('none')
+      victory.classList.remove('none');
+      document.getElementById('h2').innerHTML = 'Vous avez gagné';
+      removeListener(columns);
+    }
+  }
+}
+
+// columns.forEach((column) => {
+//   column.onclick = function () {
+//     let playedCell = this.getAttribute("id");
+//     console.log(player.turn);
+//     console.log(playersInRoom)
+//     socket.emit("info");
+//     if (player.turn === true) {
+//       let columnIndex = playedCell.substring(4);
+//       for (let i = 0; i < board[columnIndex].length; i++) {
+//         if (board[columnIndex][i] == 0) { //verif si la case est jouable
+//           board[columnIndex][i] = player.socketId;
+//           playedCell = `${columnIndex}-${i}`;
+//           console.log(playedCell)
+//           player.playedCell = playedCell;
+//           document.getElementById(`${playedCell}`).classList.add("team");
+//           player.win = getWinner(columnIndex, playedCell.substring(2));
+//           break;
+//         }
+//       }
+//       player.turn = false;
+//       socket.emit("play", player);
+
+//       if (player.win) {
+//         // game.classList.add('none');
+//         info.classList.add('none')
+//         victory.classList.remove('none');
+//         document.getElementById('h2').innerHTML = 'Vous avez gagné';
+//       }
+//     }
+//   };
+// });
 
 socket.on("play", (ennemyPlayer, cellsPlayed) => {
   if (ennemyPlayer.socketId !== player.socketId && !ennemyPlayer.turn) {
     columcell = ennemyPlayer.playedCell.substring(0, 1);
     for (let i = 0; i < board[columcell].length; i++) {
       if (board[columcell][i] == 0) {
-        board[columcell][i] = ennemyPlayer.username;
+        board[columcell][i] = ennemyPlayer.socketId;
         let playedCell = `${columcell}-${i}`;
         player.playedCell = playedCell;
         document.getElementById(`${playedCell}`).classList.add("danger");
@@ -146,11 +209,13 @@ socket.on("play", (ennemyPlayer, cellsPlayed) => {
       }
     }
     player.turn = true;
+    addListener(columns);
     if (ennemyPlayer.win) {
       // game.classList.add('none');
       info.classList.add('none')
       victory.classList.remove('none');
       document.getElementById('h2').innerHTML = 'Vous avez perdu';
+      removeListener(columns);
     }
   }
 
@@ -158,6 +223,7 @@ socket.on("play", (ennemyPlayer, cellsPlayed) => {
     // game.classList.add('none');
     info.classList.add('none')
     victory.classList.remove('none');
+    removeListener(columns);
   }
 
 });
@@ -221,9 +287,11 @@ function startGame(players) {
   waitingPlayer.classList.add('none');
   waitingEnemy.classList.add('none');
 
-
   ennemyPlayer = playersInRoom.find((p) => p.socketId != player.socketId);
-
+  if (player.turn) {
+    addListener(columns); 
+  }
+  
   document.getElementById('player1').innerHTML = player.username;
   document.getElementById('player2').innerHTML = ennemyPlayer.username;
 
@@ -233,7 +301,7 @@ function getWinner(columcell, cell) {
   let equal = 0;
   //vertical
   for (let i = 0; i < board[columcell].length; i++) {
-    board[columcell][i] == player.username ? equal++ : (equal = 0);
+    board[columcell][i] == player.socketId ? equal++ : (equal = 0);
     if (equal >= 4) {
       equal = 0;
       return true;
@@ -242,7 +310,7 @@ function getWinner(columcell, cell) {
 
   //horizontal
   for (let i = 0; i < board.length; i++) {
-    board[i][cell] == player.username ? equal++ : (equal = 0);
+    board[i][cell] == player.socketId ? equal++ : (equal = 0);
     if (equal >= 4) {
       equal = 0;
       return true;
@@ -258,7 +326,7 @@ function getWinner(columcell, cell) {
     i <= Math.min(board[columcell].length, board.length + columnIndex);
     i++
   ) {
-    board[i][i - columnIndex] == player.username ? equal++ : (equal = 0);
+    board[i][i - columnIndex] == player.socketId ? equal++ : (equal = 0);
     if (equal >= 4) {
       equal = 0;
       return true;
@@ -273,7 +341,7 @@ function getWinner(columcell, cell) {
     i <= Math.min(board[columcell].length, columnIndex + 1);
     i++
   ) {
-    board[i][columnIndex - i] == player.username ? equal++ : (equal = 0);
+    board[i][columnIndex - i] == player.socketId ? equal++ : (equal = 0);
     if (equal >= 4) {
       equal = 0;
       return true;

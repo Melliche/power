@@ -169,10 +169,6 @@ button {
   flex-direction: column;
 }
 
-.game-section .game .column:hover {
-  background-color: #385068;
-}
-
 .game-section .game .column .cell {
   height: 4rem;
   width: 4rem;
