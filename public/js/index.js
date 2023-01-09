@@ -36,6 +36,9 @@ const victory = document.getElementById('victory');
 const restartButton = document.getElementById('restartButton');
 const waitingEnemy = document.getElementById('waitingEnemy');
 const wantReplay = document.getElementById('wantReplay');
+const player1Timer = document.getElementById('player1-timer');
+const player2Timer = document.getElementById('player2-timer');
+
 
 socket.emit("get rooms");
 
@@ -289,12 +292,34 @@ function startGame(players) {
 
   ennemyPlayer = playersInRoom.find((p) => p.socketId != player.socketId);
   if (player.turn) {
-    addListener(columns); 
+    addListener(columns);
   }
   
+  setInterval(timestamp, 1000);
   document.getElementById('player1').innerHTML = player.username;
   document.getElementById('player2').innerHTML = ennemyPlayer.username;
 
+}
+let timestampz = Date.now() + 20000;
+
+function timestamp() {
+  console.log('timestamp')
+  let currentTime = Date.now();
+  let timer = round(timestampz - currentTime) / 1000
+  console.log(timer)
+  if (timer < 0) {
+  console.log('oui')
+  } else {
+    if (player.turn) {
+      player1Timer.innerHTML = timer;
+    } else {
+      player2Timer.innerHTML = timer;
+    }
+  }
+}
+
+function round(num) {
+  return Math.round(num / 100) * 100;
 }
 
 function getWinner(columcell, cell) {
