@@ -1,11 +1,11 @@
 // Serveur
 
 const express = require("express");
-const app = express();
 const http = require("http");
+const app = require('./src/app');
 const server = http.createServer(app);
-const path = require("path");
 const port = 8080;
+const path = require("path");
 
 const { Server } = require("socket.io");
 /**
@@ -21,6 +21,13 @@ app.get("/", (req, res) => {
 
 server.listen(port, () => {
   console.log(`Listening on http://localhost:${port}/`);
+});
+
+server.on('error', e => {
+  if (e.code === 'EADDRINUSE') {
+    console.log(`Error : address http://localhost:${port} already in use`);
+    process.exit();
+  }
 });
 
 let rooms = [];

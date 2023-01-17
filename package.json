@@ -10,7 +10,7 @@
     "build-clean": "rimraf css",
     "build-sass": "node-sass --output-style expanded --source-map true public/sass/styles.sass public/css/styles.css",
     "watch": "npm run build-sass -- --watch",
-    "start": "node app.js",
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +26,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "mongoose": "^6.8.3",
     "node-sass": "^8.0.0",
     "path": "^0.12.7",
     "socket.io": "^4.5.3"
